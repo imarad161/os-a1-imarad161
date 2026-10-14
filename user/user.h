@@ -1,6 +1,8 @@
 #define SBRK_ERROR ((char *)-1)
 
 struct stat;
+struct sysinfo;
+struct uproc;
 
 // system calls
 int fork(void);
@@ -21,6 +23,9 @@ int mkdir(const char *);
 int chdir(const char *);
 int dup(int);
 int getpid(void);
+int trace(int mask);
+int sysinfo(struct sysinfo *);
+int getprocs(struct uproc *, int);
 char *sys_sbrk(int, int);
 int pause(int);
 int uptime(void);

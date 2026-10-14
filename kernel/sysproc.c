@@ -1,6 +1,7 @@
 #include "types.h"
 #include "riscv.h"
 #include "defs.h"
+#include "sysinfo.h"
 #include "param.h"
 #include "memlayout.h"
 #include "spinlock.h"
@@ -20,6 +21,44 @@ uint64
 sys_getpid(void)
 {
   return myproc()->pid;
+}
+
+uint64
+sys_trace(void)
+{
+int mask;
+
+argint(0, &mask);
+myproc()->trace_mask = mask;
+
+return 0;
+}
+
+uint64
+sys_sysinfo(void)
+{
+uint64 addr;
+struct sysinfo info;
+
+argaddr(0, &addr);
+
+info.freemem = freemem();
+info.nproc = nproc();
+
+if (copyout(myproc()->pagetable, 0, addr, (char *)&info, sizeof(info)) < 0)
+return -1;
+return 0;
+}
+
+uint64
+sys_getprocs(void)
+{
+uint64 addr;
+int max;
+
+argaddr(0, &addr);
+argint(1, &max);
+return getprocs(addr, max);
 }
 
 uint64
